@@ -23,9 +23,9 @@ float pop(struct MinHeap *h) {
 
     size_t idx = 0;
     size_t smallest;
-    float parenIdx;
-    float lIdx;
-    float rIdx;
+    size_t parenIdx;
+    size_t lIdx;
+    size_t rIdx;
     
     while (1) {
         if (idx < 0) {
@@ -35,11 +35,11 @@ float pop(struct MinHeap *h) {
         parenIdx = idx / 2;
         lIdx = idx * 2 + 1;
         rIdx = idx * 2 + 2;
-        if (lIdx < h->len) && (h->arr[lIdx] < h->arr[smallest]) {
-            smallest = lIdx
+        if (lIdx < h->len && h->arr[lIdx] < h->arr[smallest]) {
+            smallest = lIdx;
         }
-        if (rIdx < h->len) && (h->arr[rIdx] < h->arr[smallest]) {
-            smallest = rIdx
+        if (rIdx < h->len && h->arr[rIdx] < h->arr[smallest]) {
+            smallest = rIdx;
         }
     }
 
