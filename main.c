@@ -89,6 +89,7 @@ struct MinHeap heapify(float *arr, size_t arrLen) {
     for (size_t j = 0; j < arrLen; j++) {
         heap.arr[j] = arr[j];
     }
+    bubbleDown(&heap, 0);
     return heap;
 }
 
