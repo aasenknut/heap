@@ -12,9 +12,32 @@ struct MinHeap {
     size_t cap;
 };
 
-
-void push(struct MinHeap *h) {
+void bubbleUp(struct MinHeap *h, size_t idx) {
+    size_t parenIdx;
+    float tmp;
+    while (idx > 0) {
+        parenIdx = (idx - 1) / 2;
+        if (h->arr[idx] >= h->arr[parenIdx]) {
+            break;
+        } else {
+            tmp = h->arr[parenIdx];
+            h->arr[parenIdx] = h->arr[idx];
+            h->arr[idx] = tmp;
+        }
+    }
 }
+
+void push(struct MinHeap *h, float x) {
+    if (h->len >= h->cap) {
+        fprintf(stderr, "\nheap is full - len >= cap");
+        return;
+    }
+    h->len++;
+    size_t idx = h->len-1;
+    h->arr[idx] = x;
+    bubbleUp(h, idx);
+}
+
 
 float pop(struct MinHeap *h) {
     float x = h->arr[0];
@@ -26,27 +49,25 @@ float pop(struct MinHeap *h) {
     size_t parenIdx;
     size_t lIdx;
     size_t rIdx;
-    float temp;
-    
-    while (1) {
-        if (idx < 0) {
-            break;
-        }
+    float tmp;
+
+    while (idx >= 0) {
         smallest = idx;
-        parenIdx = idx / 2;
+        parenIdx = (idx-1) / 2;
         lIdx = idx * 2 + 1;
         rIdx = idx * 2 + 2;
+
         if (lIdx < h->len && h->arr[lIdx] < h->arr[smallest]) {
             smallest = lIdx;
         }
         if (rIdx < h->len && h->arr[rIdx] < h->arr[smallest]) {
             smallest = rIdx;
         }
-        
+
         if (idx != smallest) {
-            temp = h->arr[idx];
-            h->arr[idx] = smallest;
-            h->arr[smallest] = temp;
+            tmp = h->arr[idx];
+            h->arr[idx] = h->arr[smallest];
+            h->arr[smallest] = tmp;
             idx = smallest;
         } else {
             break;
@@ -58,7 +79,6 @@ float pop(struct MinHeap *h) {
 
 void bubbleDown(struct MinHeap *h, size_t idx) {
     size_t smallest = idx;
-    size_t parenIdx = idx / 2;
     size_t lIdx = idx * 2 + 1;
     size_t rIdx = idx * 2 + 2;
     if (lIdx < h->len && h->arr[lIdx] < h->arr[smallest]) {
@@ -67,16 +87,14 @@ void bubbleDown(struct MinHeap *h, size_t idx) {
     if (rIdx < h->len && h->arr[rIdx] < h->arr[smallest]) {
         smallest = rIdx;
     }
-    
+
     if (idx != smallest) {
-        float temp = h->arr[idx];
-        h->arr[idx] = smallest;
-        h->arr[smallest] = temp;
+        float tmp = h->arr[idx];
+        h->arr[idx] = h->arr[smallest];
+        h->arr[smallest] = tmp;
         bubbleDown(h, smallest);
     }
 }
-
-
 
 struct MinHeap heapify(float *arr, size_t arrLen) {
     struct MinHeap heap;
@@ -84,22 +102,28 @@ struct MinHeap heapify(float *arr, size_t arrLen) {
     heap.cap = CAP;
     heap.arr = (float *)malloc(sizeof(float) * CAP);
     if (heap.arr == NULL) {
-        return heap; // Return an error code
+        fprintf(stderr, "\nfailed to heapify - heap.array = null");
+        return heap;
     }
     for (size_t j = 0; j < arrLen; j++) {
         heap.arr[j] = arr[j];
     }
-    bubbleDown(&heap, 0);
+    for (int j = (arrLen / 2) - 1; j >= 0; j--) {
+        bubbleDown(&heap, j);
+    }
     return heap;
 }
 
 int main() {
     struct MinHeap heap;
-    float arr[5] = {1.5, 3.2, 1.1, 4.5, 7.9};
+    float arr[5] = {1.5, 3.2, 5.1, 4.5, 1};
     heap = heapify(arr, 5);
     if (heap.arr == NULL) {
-        fprintf(stderr, "Memory allocation failed.\n");
+        fprintf(stderr, "\nmemory allocation failed");
         return 1;
+    }
+    for (size_t j = 0; j < 5; j++) {
+        printf("\n%f", heap.arr[j]);
     }
     free(heap.arr);
     return 0;
