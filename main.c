@@ -26,6 +26,7 @@ float pop(struct MinHeap *h) {
     size_t parenIdx;
     size_t lIdx;
     size_t rIdx;
+    float temp;
     
     while (1) {
         if (idx < 0) {
@@ -41,13 +42,40 @@ float pop(struct MinHeap *h) {
         if (rIdx < h->len && h->arr[rIdx] < h->arr[smallest]) {
             smallest = rIdx;
         }
+        
+        if (idx != smallest) {
+            temp = h->arr[idx];
+            h->arr[idx] = smallest;
+            h->arr[smallest] = temp;
+            idx = smallest;
+        } else {
+            break;
+        }
     }
 
     return x;
 }
 
-void arrange(struct MinHeap *h) {
+void bubbleDown(struct MinHeap *h, size_t idx) {
+    size_t smallest = idx;
+    size_t parenIdx = idx / 2;
+    size_t lIdx = idx * 2 + 1;
+    size_t rIdx = idx * 2 + 2;
+    if (lIdx < h->len && h->arr[lIdx] < h->arr[smallest]) {
+        smallest = lIdx;
+    }
+    if (rIdx < h->len && h->arr[rIdx] < h->arr[smallest]) {
+        smallest = rIdx;
+    }
+    
+    if (idx != smallest) {
+        float temp = h->arr[idx];
+        h->arr[idx] = smallest;
+        h->arr[smallest] = temp;
+        bubbleDown(h, smallest);
+    }
 }
+
 
 
 struct MinHeap heapify(float *arr, size_t arrLen) {
